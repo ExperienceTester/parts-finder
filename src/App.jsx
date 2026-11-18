@@ -5,7 +5,7 @@ import StateLine from "./components/StateLine";
 
 export default function App() {
   return (
-    <div className="container py-2 mx-auto">
+    <div className="container py-2">
       <header className="mb-2 text-center">
         <h1 className="display-5 fw-bold text-dark">Подбор автозапчастей</h1>
         <p className="lead text-muted">

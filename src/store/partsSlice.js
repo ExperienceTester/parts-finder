@@ -9,7 +9,19 @@ const createEmptyList = () => ({
   reqId: null,
 });
 
-export const loadBrands = createAsyncThunk(
+
+const createApiThunk = (type, request) => createAsyncThunk(type, async (arg, { rejectWithValue }) => {
+  try {
+    return await request(arg);
+  } catch (error) {
+    return rejectWithValue({
+      message: error.message,
+      retryable: error.retryable ?? true
+    });
+  }
+});
+
+export const loadBrands = createApiThunk(
   "parts/loadBrands",
   async (number) => {
     const data = await fetchParts({ number });
@@ -19,7 +31,7 @@ export const loadBrands = createAsyncThunk(
   },
 );
 
-export const loadOffers = createAsyncThunk(
+export const loadOffers = createApiThunk(
   "parts/loadOffers",
   async ({ number, brand }) => {
     const data = await fetchParts({ number, brand, analogues: "on" });
@@ -29,12 +41,12 @@ export const loadOffers = createAsyncThunk(
   },
 );
 
-const initialState = {
+const createInitialState = () => ({
   brands: createEmptyList(),
   offers: createEmptyList(),
 
   partNumber: null,
-};
+});
 
 const addThunk = (builder, thunk, key, onPending) => {
   builder
@@ -56,14 +68,18 @@ const addThunk = (builder, thunk, key, onPending) => {
     .addCase(thunk.rejected, (state, action) => {
       if (state[key].reqId !== action.meta.requestId) return;
 
-      state[key].error = action.error.message;
+      state[key].items = [];
+      state[key].error = action.payload ?? {
+        message: action.error.message,
+        retryable: true
+      };
       state[key].status = "error";
     });
 };
 
 const partsSlice = createSlice({
   name: "parts",
-  initialState,
+  initialState: createInitialState(),
 
   selectors: {
     selectIsLoading: (state) =>
@@ -76,7 +92,7 @@ const partsSlice = createSlice({
   },
 
   reducers: {
-    reset: () => initialState,
+    reset: () => createInitialState(),
     setPartNumber: (state, action) => {
       state.partNumber = action.payload;
     },

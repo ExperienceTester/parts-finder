@@ -9,11 +9,18 @@ const API_ERRORS = {
     "Превышен лимит запросов на поиск грузовых запчастей.",
 };
 
+class ResponseError extends Error {
+  constructor(message, retryable = true) {
+    super(message);
+    this.retryable = retryable;
+  }
+}
+
 export async function fetchParts(params) {
   const queryStr = new URLSearchParams({ key: KEY, ...params });
 
   const res = await fetch(`/api/?${queryStr}`).catch(() => {
-    throw new Error(
+    throw new ResponseError(
       "Не удалось связаться с сервером. Проверьте подключение к сети.",
     );
   });
@@ -22,18 +29,21 @@ export async function fetchParts(params) {
 
   if (data?.error) {
     const errors = Array.isArray(data.error) ? data.error : [data.error];
+    const retryable = !errors.some((error) => error in API_ERRORS);
 
-    throw new Error(
+    throw new ResponseError(
       errors.map((error) => API_ERRORS[error] || error).join(" "),
+      retryable
     );
   }
 
   if (!res.ok) {
-    throw new Error(`Ошибка сервера: ${res.status} ${res.statusText}`);
+    const retryable = res.status >= 500 || res.status === 429;
+    throw new ResponseError(`Ошибка сервера: ${res.status} ${res.statusText}`, retryable);
   }
 
   if (!data || !Array.isArray(data.goods)) {
-    throw new Error("Сервер вернул некорректный ответ.");
+    throw new ResponseError("Сервер вернул некорректный ответ.");
   }
 
   return (data.goods || []).filter((item) => !!item.brand);
