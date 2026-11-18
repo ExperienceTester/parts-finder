@@ -65,7 +65,7 @@ export default function SearchForm() {
         <input
           ref={inputRef}
           id="searchInput"
-          type="search"
+          type="text"
           className="form-control text-truncate pe-4"
           placeholder="Введите артикул детали (например, 7160500039S)"
           value={value}

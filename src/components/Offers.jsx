@@ -22,7 +22,6 @@ function OffersList({ items, brand }) {
     setLimit((prev) => prev + STEP);
   };
 
-  useEffect(() => setLimit(STEP), [items]);
   useEffect(() => {
     if (limit >= STEP && ctRef.current) {
       ctRef.current.scrollIntoView({
