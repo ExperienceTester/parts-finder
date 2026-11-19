@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import OfferItem from "./OfferItem";
 import { useSelector } from "react-redux";
 
@@ -34,6 +34,8 @@ function OffersList({ items, brand }) {
       setScrollTopVisible(window.scrollY > 200);
     };
 
+    toggleVisibility();
+
     window.addEventListener('scroll', toggleVisibility, { passive: true });
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
@@ -47,7 +49,7 @@ function OffersList({ items, brand }) {
         </p>
       </div>
 
-      <div className="list-group list-group-flush overflow-auto pe-2">
+      <div className="list-group list-group-flush pe-2">
         {visibleItems.map((offer, idx) => (
           <OfferItem key={`${offer.goodsID}-${idx}`} item={offer} />
         ))}
@@ -73,7 +75,7 @@ function OffersList({ items, brand }) {
         aria-label="Наверх"
       >
         <svg
-          xmlns="http://w3.org"
+          xmlns="http://www.w3.org/2000/svg"
           width="32"
           height="32"
           viewBox="0 0 24 24"
