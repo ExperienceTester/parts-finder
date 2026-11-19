@@ -22,7 +22,6 @@ export default function SearchForm() {
   const processSearch = () => {
     if (!number) return;
     clearDebounceTimer();
-    dispatch(setPartNumber(number));
     dispatch(loadBrands(number));
   }
 

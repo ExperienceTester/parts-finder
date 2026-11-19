@@ -13,8 +13,8 @@ export default function Offers() {
 }
 
 function OffersList({ items, brand }) {
-  const [limit, setLimit] = useState(STEP);
-  const ctRef = useRef(null);
+  const [ limit, setLimit ] = useState(STEP);
+  const [ isScrollTopVisible, setScrollTopVisible ] = useState(false);
 
   const visibleItems = (items ?? []).slice(0, limit);
 
@@ -22,17 +22,24 @@ function OffersList({ items, brand }) {
     setLimit((prev) => prev + STEP);
   };
 
+  const handleScrollTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }
+
   useEffect(() => {
-    if (limit >= STEP && ctRef.current) {
-      ctRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-      });
-    }
-  }, [limit]);
+    const toggleVisibility = () => {
+      setScrollTopVisible(window.scrollY > 200);
+    };
+
+    window.addEventListener('scroll', toggleVisibility, { passive: true });
+    return () => window.removeEventListener('scroll', toggleVisibility);
+  }, []);
 
   return (
-    <div className="container py-4" ref={ctRef}>
+    <div className="container py-4">
       <div className="mb-3">
         <h5 className="fw-bold mb-1 text-dark">Предложения для {brand}</h5>
         <p className="text-muted small mb-4">
@@ -57,6 +64,28 @@ function OffersList({ items, brand }) {
           </button>
         </div>
       )}
+
+      {isScrollTopVisible && <button
+        type="button"
+        onClick={handleScrollTop}
+        className="btn btn-primary rounded-circle position-fixed end-0 me-4 d-flex align-items-center justify-content-center fw-medium"
+        style={{ width: '42px', height: '42px', zIndex: 1050, bottom: '32px' }}
+        aria-label="Наверх"
+      >
+        <svg
+          xmlns="http://w3.org"
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="3.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="18 15 12 9 6 15" />
+        </svg>
+      </button>}
     </div>
   );
 }

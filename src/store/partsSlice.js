@@ -71,7 +71,7 @@ const addThunk = (builder, thunk, key, onPending) => {
       state[key].items = [];
       state[key].error = action.payload ?? {
         message: action.error.message,
-        retryable: true
+        retryable: false
       };
       state[key].status = "error";
     });
