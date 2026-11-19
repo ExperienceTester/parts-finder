@@ -46,8 +46,6 @@ export default function SearchForm() {
       return;
     }
 
-    dispatch(setPartNumber(number));
-
     timerRef.current = setTimeout(() => {
       timerRef.current = null;
       dispatch(loadBrands(number));

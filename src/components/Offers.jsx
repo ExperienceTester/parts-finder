@@ -32,7 +32,7 @@ function OffersList({ items, brand }) {
   }, [limit]);
 
   return (
-    <div className="container my-4 p-0" ref={ctRef}>
+    <div className="container py-4" ref={ctRef}>
       <div className="mb-3">
         <h5 className="fw-bold mb-1 text-dark">Предложения для {brand}</h5>
         <p className="text-muted small mb-4">

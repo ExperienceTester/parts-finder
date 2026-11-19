@@ -16,7 +16,7 @@ const createApiThunk = (type, request) => createAsyncThunk(type, async (arg, { r
   } catch (error) {
     return rejectWithValue({
       message: error.message,
-      retryable: error.retryable ?? true
+      retryable: error.retryable ?? false
     });
   }
 });

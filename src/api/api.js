@@ -9,6 +9,12 @@ const API_ERRORS = {
     "Превышен лимит запросов на поиск грузовых запчастей.",
 };
 
+const FATAL_API_ERRORS = [
+  "Empty key!",
+  "Invalid key client!",
+  "Empty number goods!"
+];
+
 class ResponseError extends Error {
   constructor(message, retryable = true) {
     super(message);
@@ -21,7 +27,7 @@ export async function fetchParts(params) {
 
   const res = await fetch(`/api/?${queryStr}`).catch(() => {
     throw new ResponseError(
-      "Не удалось связаться с сервером. Проверьте подключение к сети.",
+      "Не удалось связаться с сервером. Проверьте подключение к сети."
     );
   });
 
@@ -29,7 +35,7 @@ export async function fetchParts(params) {
 
   if (data?.error) {
     const errors = Array.isArray(data.error) ? data.error : [data.error];
-    const retryable = !errors.some((error) => error in API_ERRORS);
+    const retryable = !errors.some((error) => FATAL_API_ERRORS.includes(error));
 
     throw new ResponseError(
       errors.map((error) => API_ERRORS[error] || error).join(" "),
